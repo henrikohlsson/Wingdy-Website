@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wingdy: Web Design & Development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root {
+  --bg-darker: #0a0a0b;
+  --bg-dark:   #1c1d1f;
+  --bg-base:   #232426;
+  --bgp-base:  #0047ff;
+  --bgp-light: #4b88ff;
+  --bgp-dark:  #1133b6;
+  --bgp-lighter:#d9e6ff;
+  --emphasis:  #a0c0ff;
+  --white:     #fff;
+  --para:      rgba(255,255,255,0.65);
+  --line:      rgba(255,255,255,0.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  background:var(--bg-darker);
+  color:var(--white);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  font-weight:300;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+::selection{background:var(--bgp-base);color:#fff}
+h1,h2,h3{font-family:'Playfair Display',serif;letter-spacing:-0.025em;line-height:1.07}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmerPulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes orbFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-20px)}}
+
+.fade-up{animation:fadeUp .7s cubic-bezier(.22,1,.36,1) both}
+.delay-1{animation-delay:.12s}
+.delay-2{animation-delay:.22s}
+.delay-3{animation-delay:.34s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg-darker)}
+::-webkit-scrollbar-thumb{background:rgba(75,136,255,.35);border-radius:4px}
+
+/* ── NAV ─────────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 64px;
+  background:linear-gradient(180deg,rgba(10,10,11,.92) 0%,transparent 100%);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s ease;
+}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-logo{
+  font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:21px;
+  color:#fff;text-decoration:none;letter-spacing:-.02em;
+}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:400;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-links .cta{
+  background:var(--bgp-base) !important;color:#fff !important;
+  padding:8px 22px;border-radius:50px;font-weight:500 !important;
+  box-shadow:0 2px 16px rgba(0,71,255,.35);
+  transition:box-shadow .2s,transform .2s !important;
+}
+.nav-links .cta:hover{box-shadow:0 4px 24px rgba(0,71,255,.5);transform:translateY(-1px)}
+.lang-toggle{
+  background:none;border:1px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.5);
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:500;
+  letter-spacing:.1em;padding:4px 9px;border-radius:4px;
+  cursor:pointer;transition:color .2s,border-color .2s;
+  line-height:1;
+}
+.lang-toggle:hover{color:#fff;border-color:rgba(255,255,255,.45)}
+.lang-toggle:focus-visible{outline:2px solid var(--bgp-light);outline-offset:2px}
+
+/* ── BUTTONS ─────────────────────────────────────── */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--bgp-base);color:#fff;text-decoration:none;
+  padding:13px 28px;border-radius:50px;
+  font-size:13px;font-weight:500;letter-spacing:.01em;
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s ease;
+  box-shadow:0 4px 24px rgba(0,71,255,.35),0 1px 4px rgba(0,0,0,.3);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(0,71,255,.5),0 2px 8px rgba(0,0,0,.3)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary svg{flex-shrink:0;transition:transform .2s ease}
+.btn-primary:hover svg{transform:translateX(3px)}
+
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--emphasis);text-decoration:none;
+  font-size:13px;font-weight:400;padding:13px 0;
+  transition:color .2s ease;
+}
+.btn-ghost:hover{color:#fff}
+.btn-ghost svg{transition:transform .2s ease}
+.btn-ghost:hover svg{transform:translateX(4px)}
+
+/* ── HERO ────────────────────────────────────────── */
+.hero{
+  min-height:100vh;padding:128px 64px 100px;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+#hero-bg{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  z-index:0;pointer-events:none;display:block;
+}
+.hero > *{position:relative;z-index:1}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,71,255,.1);border:1px solid rgba(75,136,255,.22);
+  border-radius:50px;padding:6px 16px;
+  font-size:11px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--emphasis);margin-bottom:28px;
+}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--bgp-light);animation:shimmerPulse 2s ease-in-out infinite}
+.hero h1{
+  font-size:clamp(40px,5vw,72px);font-weight:700;margin-bottom:24px;
+  max-width:760px;
+}
+.hero h1 em{font-style:italic;color:var(--emphasis)}
+.hero-desc{
+  color:var(--para);font-size:16px;line-height:1.8;
+  max-width:500px;margin:0 auto 40px;
+}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+
+/* ── HOW IT WORKS ────────────────────────────────── */
+.section-about{
+  padding:100px 64px;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;
+  border-top:1px solid var(--line);
+}
+.section-eyebrow{
+  font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--bgp-light);margin-bottom:16px;
+}
+.section-about h2{font-size:clamp(28px,3vw,44px);font-weight:700;margin-bottom:20px}
+.section-about p{color:var(--para);font-size:14px;line-height:1.8;margin-bottom:14px}
+
+.about-features{display:flex;flex-direction:column;gap:14px}
+.about-feat{
+  padding:20px 24px;background:var(--bg-dark);border-radius:10px;
+  border:1px solid var(--line);
+  transition:border-color .25s,transform .25s;
+}
+.about-feat:hover{border-color:rgba(75,136,255,.28);transform:translateX(4px)}
+.about-feat-title{font-weight:500;font-size:14px;margin-bottom:5px;color:#fff}
+.about-feat-desc{color:var(--para);font-size:13px;line-height:1.6}
+
+/* ── SERVICES ────────────────────────────────────── */
+.section-services{padding:80px 64px 100px;border-top:1px solid var(--line)}
+.section-services > h2{font-size:36px;font-weight:700;margin-bottom:8px}
+.section-services > .svc-intro{color:var(--para);font-size:14px;margin-bottom:44px;max-width:480px}
+.svc-list{display:flex;flex-direction:column}
+.svc-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 0;border-bottom:1px solid var(--line);
+  cursor:pointer;transition:padding-left .25s ease;
+  gap:24px;
+}
+.svc-item:hover{padding-left:10px}
+.svc-body{display:flex;flex-direction:column;gap:6px}
+.svc-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,2.5vw,34px);font-weight:600;
+  color:rgba(255,255,255,.38);letter-spacing:-.02em;
+  transition:color .25s ease;
+}
+.svc-desc{
+  font-size:13px;line-height:1.6;color:rgba(255,255,255,.28);
+  max-width:520px;transition:color .25s ease;
+}
+.svc-item:hover .svc-name{color:#fff}
+.svc-item:hover .svc-desc{color:rgba(255,255,255,.55)}
+.svc-item.hl .svc-name{color:var(--emphasis)}
+.svc-item.hl .svc-desc{color:rgba(255,255,255,.38)}
+.svc-arrow{color:rgba(255,255,255,.25);transition:color .2s,transform .2s;flex-shrink:0}
+.svc-item:hover .svc-arrow{color:var(--bgp-light);transform:translateX(5px)}
+
+
+/* ── TRUSTED BY ──────────────────────────────────── */
+.section-proof{
+  padding:90px 0 80px;position:relative;overflow:hidden;text-align:center;
+}
+.proof-orb{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:800px;height:420px;
+  background:radial-gradient(ellipse,rgba(0,71,255,.26) 0%,rgba(0,71,255,.1) 40%,transparent 70%);
+  pointer-events:none;filter:blur(16px);
+}
+.proof-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(24px,3vw,40px);font-weight:600;font-style:italic;
+  color:rgba(255,255,255,.8);margin-bottom:52px;position:relative;
+}
+.logo-row{
+  display:flex;align-items:center;justify-content:center;
+  gap:52px;padding:0 80px;position:relative;
+}
+.logo-row::before,.logo-row::after{
+  content:'';position:absolute;top:0;bottom:0;width:240px;pointer-events:none;z-index:1;
+}
+.logo-row::before{left:0;background:linear-gradient(90deg,var(--bg-darker),transparent)}
+.logo-row::after{right:0;background:linear-gradient(-90deg,var(--bg-darker),transparent)}
+.logo-word{
+  font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+  font-style:italic;color:rgba(255,255,255,.28);white-space:nowrap;letter-spacing:-.01em;
+  transition:color .25s;
+}
+.logo-word:hover{color:rgba(255,255,255,.55)}
+.logo-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0}
+
+/* ── CTA STRIPE ──────────────────────────────────── */
+.section-cta{
+  padding:88px 64px;text-align:center;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.cta-eyebrow{
+  font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:18px;
+}
+.section-cta h2{font-size:clamp(32px,4.5vw,58px);font-weight:700;margin-bottom:16px}
+.section-cta .cta-sub{color:var(--para);font-size:15px;margin-bottom:36px}
+
+/* ── WHAT WE BUILD ───────────────────────────────── */
+.section-cases{padding:80px 64px 100px;border-top:1px solid var(--line)}
+.cases-head h2{font-size:clamp(28px,3vw,40px);font-weight:700;margin-bottom:8px}
+.cases-statement{
+  color:var(--para);font-size:15px;line-height:1.75;
+  max-width:640px;margin-top:20px;
+}
+.caps-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--line);
+  margin-top:52px;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+}
+.cap-item{
+  padding:36px 32px;background:var(--bg-dark);
+  display:flex;flex-direction:column;gap:12px;
+  transition:background .3s cubic-bezier(.22,1,.36,1);
+}
+.cap-item:hover{background:rgba(255,255,255,.03)}
+.cap-num{
+  font-size:11px;color:var(--emphasis);font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.cap-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(18px,1.8vw,22px);font-weight:600;line-height:1.2;
+  color:rgba(255,255,255,.88);
+}
+.cap-desc{color:var(--para);font-size:13px;line-height:1.7;}
+
+/* ── BOTTOM CTA ──────────────────────────────────── */
+.section-end{
+  padding:130px 64px 200px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.end-orb{
+  position:absolute;bottom:-280px;left:50%;
+  transform:translateX(-50%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,71,255,.28) 0%,rgba(0,71,255,.08) 45%,transparent 70%);
+  filter:blur(30px);
+  animation:orbFloat 8s ease-in-out infinite;
+  pointer-events:none;
+}
+.end-ring-1{
+  position:absolute;bottom:-320px;left:50%;transform:translateX(-50%);
+  width:800px;height:800px;border-radius:50%;
+  border:1px solid rgba(75,136,255,.14);pointer-events:none;
+}
+.end-ring-2{
+  position:absolute;bottom:-370px;left:50%;transform:translateX(-50%);
+  width:960px;height:960px;border-radius:50%;
+  border:1px solid rgba(75,136,255,.07);pointer-events:none;
+}
+.section-end h2{
+  font-size:clamp(36px,5.5vw,72px);font-weight:700;
+  max-width:740px;margin:0 auto 16px;position:relative;
+}
+.section-end h2 em{font-style:italic;color:var(--bgp-light)}
+.section-end .end-sub{
+  color:var(--para);font-size:15px;max-width:420px;margin:0 auto 40px;position:relative;
+}
+.end-wing{
+  font-size:12px;font-weight:500;
+  color:rgba(255,255,255,.35);margin-bottom:22px;
+  letter-spacing:.08em;text-transform:uppercase;position:relative;
+}
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer{
+  padding:28px 64px;
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.footer-logo{
+  font-family:'Playfair Display',serif;font-style:italic;font-weight:700;
+  font-size:16px;color:rgba(255,255,255,.5);
+}
+.footer-nav{display:flex;gap:28px;list-style:none}
+.footer-nav a{color:rgba(255,255,255,.38);text-decoration:none;font-size:12px;transition:color .2s}
+.footer-nav a:hover{color:#fff}
+footer small{font-size:11px;color:rgba(255,255,255,.2)}
+
+/* ── NAV ACTIVE STATE ────────────────────────────── */
+.nav-links a.nav-active{color:#fff}
+.nav-links a.nav-active:not(.cta)::after{
+  content:'';display:block;height:1px;
+  background:var(--bgp-light);margin-top:2px;
+  animation:fadeUp .3s ease both;
+}
+
+/* ── SCROLL ANCHOR OFFSET ────────────────────────── */
+#about,#work,#services,#contact{scroll-margin-top:76px}
+
+/* ── SCROLL REVEAL ───────────────────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+.reveal.visible{opacity:1;transform:none}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ── CONTACT ─────────────────────────────────────── */
+.section-contact{
+  padding:120px 64px 140px;
+  position:relative;overflow:hidden;
+  border-top:1px solid var(--line);
+}
+.contact-orb{
+  position:absolute;bottom:-280px;left:50%;
+  transform:translateX(-50%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,71,255,.22) 0%,rgba(0,71,255,.07) 45%,transparent 70%);
+  filter:blur(40px);pointer-events:none;
+}
+.contact-ring{
+  position:absolute;bottom:-340px;left:50%;transform:translateX(-50%);
+  width:860px;height:860px;border-radius:50%;
+  border:1px solid rgba(75,136,255,.1);pointer-events:none;
+}
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:start;position:relative;z-index:1;
+}
+.contact-eyebrow{
+  font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--emphasis);margin-bottom:20px;
+}
+.contact-heading{
+  font-size:clamp(30px,3.8vw,50px);font-weight:700;line-height:1.06;
+  margin-bottom:20px;font-family:'Playfair Display',serif;
+}
+.contact-heading em{font-style:italic;color:var(--bgp-light)}
+.contact-sub{
+  color:var(--para);font-size:14px;line-height:1.8;
+  max-width:360px;margin-bottom:44px;
+}
+.contact-details{display:flex;flex-direction:column;gap:20px}
+.contact-detail-item{display:flex;flex-direction:column;gap:3px}
+.contact-detail-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(255,255,255,.28);font-weight:500;
+}
+.contact-detail-value{font-size:13px;color:rgba(255,255,255,.7)}
+.contact-form{display:flex;flex-direction:column;gap:18px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:7px}
+.form-label{
+  font-size:10px;font-weight:500;letter-spacing:.09em;
+  text-transform:uppercase;color:rgba(255,255,255,.32);
+}
+.form-input,.form-textarea{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  border-radius:10px;padding:13px 16px;
+  color:#fff;font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:300;
+  outline:none;width:100%;
+  transition:border-color .2s,background .2s;
+}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(255,255,255,.18)}
+.form-input:focus,.form-textarea:focus{
+  border-color:rgba(75,136,255,.45);
+  background:rgba(0,71,255,.05);
+}
+.form-textarea{resize:vertical;min-height:130px}
+.form-submit{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--bgp-base);color:#fff;border:none;
+  padding:13px 30px;border-radius:50px;
+  font-size:13px;font-weight:500;cursor:pointer;
+  font-family:'Inter',sans-serif;letter-spacing:.01em;
+  box-shadow:0 4px 24px rgba(0,71,255,.35),0 1px 4px rgba(0,0,0,.3);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s ease;
+  align-self:flex-start;margin-top:4px;
+}
+.form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(0,71,255,.5),0 2px 8px rgba(0,0,0,.3)}
+.form-submit:active{transform:translateY(0)}
+.form-submit svg{flex-shrink:0;transition:transform .2s}
+.form-submit:hover svg{transform:translateX(3px)}
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media(max-width:900px){
+  .hero{padding:100px 28px 72px}
+  .section-about{grid-template-columns:1fr;padding:64px 28px;gap:40px}
+  .section-services,.section-cases,.section-cta,.section-contact{padding-left:28px;padding-right:28px}
+  .caps-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr;gap:52px}
+  .form-row{grid-template-columns:1fr}
+  .nav{padding:16px 28px}
+  footer{flex-wrap:wrap;padding:24px 28px;gap:16px}
+  .cases-head{flex-direction:column;align-items:flex-start;gap:16px}
+}
+@media(max-width:600px){
+  .nav-links{gap:16px}
+  .section-contact{padding:80px 28px 100px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">Wingdy</a>
+  <ul class="nav-links">
+    <li><a href="#about" data-i18n="nav_about">About</a></li>
+    <li><a href="#work" data-i18n="nav_work">Work</a></li>
+    <li><a href="#services" data-i18n="nav_services">Services</a></li>
+    <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+    <li><button class="lang-toggle" id="lang-toggle" aria-label="Switch to Finnish">FI</button></li>
+    <li><a href="#contact" class="cta" data-i18n="nav_cta">Get started</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<section class="hero">
+  <canvas id="hero-bg"></canvas>
+
+  <div class="hero-badge fade-up" data-i18n="hero_badge">Digital agency</div>
+
+  <h1 class="fade-up delay-1" data-i18n-html="hero_title">
+    Websites, branding, and<br><em>AI agents</em> all in one place
+  </h1>
+
+  <p class="hero-desc fade-up delay-2" data-i18n="hero_desc">
+    We're a digital agency that builds websites, creates brands, and sets up
+    AI agents that handle real work for your business, so your team doesn't have to.
+  </p>
+
+  <div class="hero-actions fade-up delay-3">
+    <a href="#contact" class="btn-primary">
+      <span data-i18n="hero_cta_primary">Get in touch</span>
+      <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="#work" class="btn-ghost">
+      <span data-i18n="hero_cta_ghost">See our work</span>
+      <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ── ABOUT ──────────────────────────────────────────────── -->
+<section class="section-about" id="about">
+  <div>
+    <p class="section-eyebrow reveal" data-i18n="about_eyebrow">About us</p>
+    <h2 class="reveal reveal-delay-1" data-i18n="about_h2">One agency for your whole digital presence</h2>
+    <p data-i18n="about_p1">We're a small agency that handles websites, branding, and AI automation. Whether you need a new site, a smarter way to handle enquiries, or an AI agent that does the repetitive work, we build it.</p>
+    <p data-i18n="about_p2">You deal with one team from start to finish. No jargon, no complicated intake forms. Just a straight conversation about what you need and what your customers expect.</p>
+    <a href="#contact" class="btn-primary" style="margin-top:28px">
+      <span data-i18n="about_cta">Tell us about your project</span>
+      <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+
+  <div class="about-features">
+    <div class="about-feat">
+      <div class="about-feat-title" data-i18n="about_feat1_title">No jargon</div>
+      <div class="about-feat-desc" data-i18n="about_feat1_desc">We explain every decision clearly. You'll never feel out of the loop or confused by tech-speak.</div>
+    </div>
+    <div class="about-feat">
+      <div class="about-feat-title" data-i18n="about_feat2_title">Fixed pricing</div>
+      <div class="about-feat-desc" data-i18n="about_feat2_desc">You know the full cost before we start. No surprise invoices, no hidden extras at the end.</div>
+    </div>
+    <div class="about-feat">
+      <div class="about-feat-title" data-i18n="about_feat3_title">Fast turnaround</div>
+      <div class="about-feat-desc" data-i18n="about_feat3_desc">Most projects go live within 2–4 weeks from our first call, so you're not waiting months.</div>
+    </div>
+    <div class="about-feat">
+      <div class="about-feat-title" data-i18n="about_feat4_title">AI that actually works</div>
+      <div class="about-feat-desc" data-i18n="about_feat4_desc">We build AI agents that handle real tasks: answering enquiries, booking calls, processing orders. Not just chatbots.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ──────────────────────────────────────────── -->
+<section class="section-services" id="services">
+  <h2 class="reveal" data-i18n="svc_h2">What we do</h2>
+  <p class="svc-intro reveal reveal-delay-1" data-i18n="svc_intro">From your first website to AI agents that work around the clock, we handle the full picture.</p>
+  <div class="svc-list">
+    <div class="svc-item">
+      <div class="svc-body">
+        <span class="svc-name" data-i18n="svc_web_title">Website Design</span>
+        <span class="svc-desc" data-i18n="svc_web_desc">Websites that actually do the selling for you. Clean, fast, and built around how your customers really buy, not how designers like to show off.</span>
+      </div>
+      <svg class="svc-arrow" width="22" height="22" fill="none" viewBox="0 0 22 22"><path d="M4 11h14M13 5l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="svc-item hl">
+      <div class="svc-body">
+        <span class="svc-name" data-i18n="svc_ai_title">AI Agents &amp; Automation</span>
+        <span class="svc-desc" data-i18n="svc_ai_desc">We build AI agents that handle the repetitive stuff your team shouldn't be doing in the first place. Lead qualification, customer questions, follow-ups, internal workflows. They run while you sleep, and they don't ask for a raise.</span>
+      </div>
+      <svg class="svc-arrow" width="22" height="22" fill="none" viewBox="0 0 22 22"><path d="M4 11h14M13 5l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="svc-item">
+      <div class="svc-body">
+        <span class="svc-name" data-i18n="svc_dev_title">Web Development</span>
+        <span class="svc-desc" data-i18n="svc_dev_desc">Custom web solutions that scale with your business instead of breaking when it grows. Built fast, built properly, built to fit how you actually operate.</span>
+      </div>
+      <svg class="svc-arrow" width="22" height="22" fill="none" viewBox="0 0 22 22"><path d="M4 11h14M13 5l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── CTA STRIPE ────────────────────────────────────────── -->
+<section class="section-cta">
+  <p class="cta-eyebrow" data-i18n="cta_eyebrow">Wingdy</p>
+  <h2 data-i18n-html="cta_h2">Need a website, a brand,<br>or an AI agent?</h2>
+  <p class="cta-sub" data-i18n="cta_sub">Most projects start with a free 30-minute call. No commitment needed.</p>
+  <a href="#contact" class="btn-primary">
+    <span data-i18n="cta_btn">Book a free call</span>
+    <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</section>
+
+<!-- ── WHAT WE BUILD ──────────────────────────────────────── -->
+<section class="section-cases" id="work">
+  <div class="cases-head">
+    <h2 class="reveal" data-i18n="work_h2">What we build</h2>
+  </div>
+  <p class="cases-statement reveal reveal-delay-1" data-i18n="work_statement">We build modern digital experiences, custom websites, and AI-powered systems designed to help businesses grow faster, operate smarter, and stand out online.</p>
+
+  <div class="caps-grid">
+    <div class="cap-item">
+      <span class="cap-num">01</span>
+      <div class="cap-title" data-i18n="work_cap1_title">Digital Experiences</div>
+      <p class="cap-desc" data-i18n="work_cap1_desc">Websites and interfaces crafted for clarity, speed, and lasting first impressions that convert.</p>
+    </div>
+    <div class="cap-item">
+      <span class="cap-num">02</span>
+      <div class="cap-title" data-i18n="work_cap2_title">AI Systems</div>
+      <p class="cap-desc" data-i18n="work_cap2_desc">Custom automations and intelligent agents built around your workflow, running continuously so you don't have to.</p>
+    </div>
+    <div class="cap-item">
+      <span class="cap-num">03</span>
+      <div class="cap-title" data-i18n="work_cap3_title">Web Development</div>
+      <p class="cap-desc" data-i18n="work_cap3_desc">Fast, scalable, fully custom solutions built to perform under real-world conditions and grow with your business.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ─────────────────────────────────────────────── -->
+<section class="section-contact" id="contact">
+  <div class="contact-orb"></div>
+  <div class="contact-ring"></div>
+
+  <div class="contact-grid">
+    <div>
+      <p class="contact-eyebrow reveal" data-i18n="contact_eyebrow">Get in touch</p>
+      <h2 class="contact-heading reveal reveal-delay-1" data-i18n-html="contact_h2">Let's build something <em>exceptional.</em></h2>
+      <p class="contact-sub reveal reveal-delay-2" data-i18n="contact_sub">Tell us about your project and we'll get back to you within one business day. No commitment required.</p>
+
+      <div class="contact-details reveal reveal-delay-3">
+        <div class="contact-detail-item">
+          <span class="contact-detail-label" data-i18n="contact_d1_label">Email</span>
+          <span class="contact-detail-value" data-i18n="contact_d1_val">henrik.ohlsson@wingdy.com</span>
+        </div>
+        <div class="contact-detail-item">
+          <span class="contact-detail-label" data-i18n="contact_d2_label">Response time</span>
+          <span class="contact-detail-value" data-i18n="contact_d2_val">Within one business day</span>
+        </div>
+        <div class="contact-detail-item">
+          <span class="contact-detail-label" data-i18n="contact_d3_label">First step</span>
+          <span class="contact-detail-value" data-i18n="contact_d3_val">A free 30-minute discovery call</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="contact-form reveal reveal-delay-1" onsubmit="return false">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="cf-name" data-i18n="form_name_label">Name</label>
+          <input class="form-input" id="cf-name" type="text" placeholder="Your name" data-i18n-placeholder="form_name_ph" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cf-email" data-i18n="form_email_label">Email</label>
+          <input class="form-input" id="cf-email" type="email" placeholder="you@company.com" data-i18n-placeholder="form_email_ph" autocomplete="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="cf-subject" data-i18n="form_subject_label">What do you need?</label>
+        <input class="form-input" id="cf-subject" type="text" placeholder="Website, AI agent, web app..." data-i18n-placeholder="form_subject_ph">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="cf-message" data-i18n="form_msg_label">Tell us more</label>
+        <textarea class="form-textarea" id="cf-message" placeholder="Brief description of your project, goals, or timeline..." data-i18n-placeholder="form_msg_ph"></textarea>
+      </div>
+      <button type="submit" class="form-submit">
+        <span data-i18n="form_submit">Send message</span>
+        <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────── -->
+<footer>
+  <span class="footer-logo">Wingdy</span>
+  <ul class="footer-nav">
+    <li><a href="#about" data-i18n="nav_about">About</a></li>
+    <li><a href="#work" data-i18n="nav_work">Work</a></li>
+    <li><a href="#services" data-i18n="nav_services">Services</a></li>
+    <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+    <li><a href="#contact" data-i18n="nav_cta">Get started</a></li>
+  </ul>
+  <small data-i18n="footer_copy">© 2025 Wingdy</small>
+</footer>
+
+<!-- ── TRANSLATIONS ───────────────────────────────────────── -->
+<script>
+const T = {
+  en: {
+    nav_about:'About', nav_work:'Work', nav_services:'Services',
+    nav_contact:'Contact', nav_cta:'Get started',
+    hero_badge:'Digital agency',
+    hero_title:'Websites, branding, and<br><em>AI agents</em> all in one place',
+    hero_desc:"We're a digital agency that builds websites, creates brands, and sets up AI agents that handle real work for your business, so your team doesn't have to.",
+    hero_cta_primary:'Get in touch', hero_cta_ghost:'See our work',
+    about_eyebrow:'About us',
+    about_h2:'One agency for your whole digital presence',
+    about_p1:"We're a small agency that handles websites, branding, and AI automation. Whether you need a new site, a smarter way to handle enquiries, or an AI agent that does the repetitive work, we build it.",
+    about_p2:"You deal with one team from start to finish. No jargon, no complicated intake forms. Just a straight conversation about what you need and what your customers expect.",
+    about_cta:'Tell us about your project',
+    about_feat1_title:'No jargon',
+    about_feat1_desc:"We explain every decision clearly. You'll never feel out of the loop or confused by tech-speak.",
+    about_feat2_title:'Fixed pricing',
+    about_feat2_desc:"You know the full cost before we start. No surprise invoices, no hidden extras at the end.",
+    about_feat3_title:'Fast turnaround',
+    about_feat3_desc:"Most projects go live within 2–4 weeks from our first call, so you're not waiting months.",
+    about_feat4_title:'AI that actually works',
+    about_feat4_desc:'We build AI agents that handle real tasks: answering enquiries, booking calls, processing orders. Not just chatbots.',
+    svc_h2:'What we do',
+    svc_intro:'From your first website to AI agents that work around the clock, we handle the full picture.',
+    svc_web_title:'Website Design',
+    svc_web_desc:"Websites that actually do the selling for you. Clean, fast, and built around how your customers really buy, not how designers like to show off.",
+    svc_ai_title:'AI Agents & Automation',
+    svc_ai_desc:"We build AI agents that handle the repetitive stuff your team shouldn't be doing in the first place. Lead qualification, customer questions, follow-ups, internal workflows. They run while you sleep, and they don't ask for a raise.",
+    svc_dev_title:'Web Development',
+    svc_dev_desc:"Custom web solutions that scale with your business instead of breaking when it grows. Built fast, built properly, built to fit how you actually operate.",
+    cta_eyebrow:'Wingdy',
+    cta_h2:'Need a website, a brand,<br>or an AI agent?',
+    cta_sub:'Most projects start with a free 30-minute call. No commitment needed.',
+    cta_btn:'Book a free call',
+    work_h2:'What we build',
+    work_statement:'We build modern digital experiences, custom websites, and AI-powered systems designed to help businesses grow faster, operate smarter, and stand out online.',
+    work_cap1_title:'Digital Experiences',
+    work_cap1_desc:'Websites and interfaces crafted for clarity, speed, and lasting first impressions that convert.',
+    work_cap2_title:'AI Systems',
+    work_cap2_desc:"Custom automations and intelligent agents built around your workflow, running continuously so you don't have to.",
+    work_cap3_title:'Web Development',
+    work_cap3_desc:'Fast, scalable, fully custom solutions built to perform under real-world conditions and grow with your business.',
+    contact_eyebrow:'Get in touch',
+    contact_h2:"Let's build something <em>exceptional.</em>",
+    contact_sub:"Tell us about your project and we'll get back to you within one business day. No commitment required.",
+    contact_d1_label:'Email',        contact_d1_val:'henrik.ohlsson@wingdy.com',
+    contact_d2_label:'Response time', contact_d2_val:'Within one business day',
+    contact_d3_label:'First step',   contact_d3_val:'A free 30-minute discovery call',
+    form_name_label:'Name',    form_name_ph:'Your name',
+    form_email_label:'Email',  form_email_ph:'you@company.com',
+    form_subject_label:'What do you need?', form_subject_ph:'Website, AI agent, web app...',
+    form_msg_label:'Tell us more',
+    form_msg_ph:'Brief description of your project, goals, or timeline...',
+    form_submit:'Send message',
+    footer_copy:'© 2025 Wingdy',
+  },
+  fi: {
+    nav_about:'Meistä', nav_work:'Työmme', nav_services:'Palvelut',
+    nav_contact:'Yhteystiedot', nav_cta:'Aloita projekti',
+    hero_badge:'Digitaalinen toimisto',
+    hero_title:'Verkkosivut, brändi ja<br><em>tekoälyagentit</em> yhdestä paikasta',
+    hero_desc:'Olemme digitaalinen toimisto, joka rakentaa verkkosivuja, luo brändejä ja ottaa käyttöön tekoälyagentit, jotka hoitavat oikeat työt yrityksesi puolesta.',
+    hero_cta_primary:'Ota yhteyttä', hero_cta_ghost:'Katso työmme',
+    about_eyebrow:'Meistä',
+    about_h2:'Yksi toimisto koko digitaaliselle läsnäolollesi',
+    about_p1:'Olemme pieni toimisto, joka hoitaa verkkosivut, brändin ja tekoälyautomaation. Tarvitsetpa uudet sivut, fiksumman tavan käsitellä yhteydenottoja tai tekoälyagentin toistuviin töihin, me rakennamme sen.',
+    about_p2:'Toimit yhden tiimin kanssa alusta loppuun. Ei jargonia, ei monimutkaisia lomakkeita. Vain suora keskustelu siitä, mitä tarvitset ja mitä asiakkaasi odottavat.',
+    about_cta:'Kerro projektistasi',
+    about_feat1_title:'Selkokielellä',
+    about_feat1_desc:'Selitämme jokaisen päätöksen selkeästi. Et koskaan jää pimentoon tai hämmenry teknisestä puheesta.',
+    about_feat2_title:'Kiinteä hinta',
+    about_feat2_desc:'Tiedät kokonaiskustannukset ennen aloitusta. Ei yllätyslaskuja, ei piilotettuja lisiä.',
+    about_feat3_title:'Nopea toimitus',
+    about_feat3_desc:'Useimmat projektit julkaistaan 2–4 viikossa ensimmäisestä puhelusta. Ei kuukausien odottelua.',
+    about_feat4_title:'Tekoäly, joka oikeasti toimii',
+    about_feat4_desc:'Rakennamme tekoälyagentit oikeisiin tehtäviin: yhteydenottoihin vastaamiseen, puheluiden varaamiseen, tilausten käsittelyyn. Ei pelkkiä chatbotteja.',
+    svc_h2:'Mitä teemme',
+    svc_intro:'Ensimmäisistä verkkosivuistasi ympäri vuorokauden pyöriviin tekoälyagentteihin, hoidamme koko kokonaisuuden.',
+    svc_web_title:'Verkkosivujen suunnittelu',
+    svc_web_desc:'Verkkosivut, jotka oikeasti myyvät puolestasi. Selkeitä, nopeita ja rakennettu sen mukaan miten asiakkaasi oikeasti ostavat, ei sen mukaan miltä suunnittelijoista näyttää hyvältä.',
+    svc_ai_title:'Tekoälyagentit ja automaatiot',
+    svc_ai_desc:'Rakennamme tekoälyagentteja, jotka hoitavat sen toistuvan työn, jota tiimisi ei pitäisi alunperinkään tehdä. Liidien laadunvarmistus, asiakaskysymykset, jälkikontaktit, sisäiset prosessit.',
+    svc_dev_title:'Verkkokehitys',
+    svc_dev_desc:'Räätälöityjä verkkoratkaisuja, jotka skaalautuvat liiketoimintasi mukana sen sijaan että hajoaisivat kasvun alla. Rakennettu nopeasti, rakennettu kunnolla, rakennettu sopimaan siihen miten oikeasti toimit.',
+    cta_eyebrow:'Wingdy',
+    cta_h2:'Tarvitsetko verkkosivut, brändin<br>tai tekoälyagentin?',
+    cta_sub:'Useimmat projektit alkavat ilmaisella 30 minuutin puhelulla. Ei sitoumusta.',
+    cta_btn:'Varaa ilmainen puhelu',
+    work_h2:'Mitä rakennamme',
+    work_statement:'Rakennamme moderneja digitaalisia kokemuksia, räätälöityjä verkkosivuja ja tekoälypohjaisia järjestelmiä, jotka auttavat yrityksiä kasvamaan nopeammin, toimimaan fiksummin ja erottumaan verkossa.',
+    work_cap1_title:'Digitaaliset kokemukset',
+    work_cap1_desc:'Verkkosivut ja käyttöliittymät, jotka on muotoiltu selkeydelle, nopeudelle ja konvertoiville ensivaikutelmille.',
+    work_cap2_title:'Tekoälyjärjestelmät',
+    work_cap2_desc:"Räätälöidyt automaatiot ja älykkäät agentit rakennettu työnkulkusi ympärille, pyörivät jatkuvasti niin et sinun tarvitse.",
+    work_cap3_title:'Verkkokehitys',
+    work_cap3_desc:'Nopeat, skaalautuvat ja täysin räätälöidyt ratkaisut rakennettu toimimaan oikeissa olosuhteissa ja kasvamaan yrityksesi mukana.',
+    contact_eyebrow:'Ota yhteyttä',
+    contact_h2:'Rakennetaan jotain <em>poikkeuksellista.</em>',
+    contact_sub:'Kerro meille projektistasi ja palaamme sinulle yhden arkipäivän kuluessa. Ei sitoumusta.',
+    contact_d1_label:'Sähköposti',   contact_d1_val:'henrik.ohlsson@wingdy.com',
+    contact_d2_label:'Vastausaika',  contact_d2_val:'Yhden arkipäivän kuluessa',
+    contact_d3_label:'Ensimmäinen askel', contact_d3_val:'Ilmainen 30 minuutin kartoituspuhelu',
+    form_name_label:'Nimi',        form_name_ph:'Sinun nimesi',
+    form_email_label:'Sähköposti', form_email_ph:'sinä@yritys.fi',
+    form_subject_label:'Mitä tarvitset?', form_subject_ph:'Verkkosivut, tekoälyagentti, verkkopalvelu...',
+    form_msg_label:'Kerro lisää',
+    form_msg_ph:'Lyhyt kuvaus projektistasi, tavoitteistasi tai aikataulustasi...',
+    form_submit:'Lähetä viesti',
+    footer_copy:'© 2025 Wingdy',
+  }
+};
+
+const LANG_KEY = 'wingdyai_lang';
+
+function detectLang() {
+  const stored = localStorage.getItem(LANG_KEY);
+  if (stored === 'en' || stored === 'fi') return stored;
+  if (typeof navigator !== 'undefined' && navigator.language && navigator.language.startsWith('fi')) return 'fi';
+  return 'en';
+}
+
+let currentLang = detectLang();
+
+function applyLang(lang) {
+  const t = T[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = t[el.dataset.i18n];
+    if (v !== undefined) el.textContent = v;
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const v = t[el.dataset.i18nHtml];
+    if (v !== undefined) el.innerHTML = v;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const v = t[el.dataset.i18nPlaceholder];
+    if (v !== undefined) el.placeholder = v;
+  });
+  const btn = document.getElementById('lang-toggle');
+  if (btn) {
+    btn.textContent = lang === 'en' ? 'FI' : 'EN';
+    btn.setAttribute('aria-label', lang === 'en' ? 'Switch to Finnish' : 'Switch to English');
+  }
+  document.documentElement.lang = lang;
+  currentLang = lang;
+  localStorage.setItem(LANG_KEY, lang);
+}
+
+document.getElementById('lang-toggle').addEventListener('click', () => {
+  applyLang(currentLang === 'en' ? 'fi' : 'en');
+});
+
+applyLang(currentLang);
+</script>
+
+<!-- ── NAV + SCROLL REVEAL + ACTIVE ──────────────────────── -->
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  const sectionObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('nav-active'));
+        const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('nav-active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -65% 0px' });
+  sections.forEach(s => sectionObs.observe(s));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => revealObs.observe(el));
+</script>
+
+<!-- ── HERO WEBGL BACKGROUND ─────────────────────────────── -->
+<script>
+(function initHeroBg() {
+  const canvas = document.getElementById('hero-bg');
+  const gl = canvas.getContext('webgl');
+  if (!gl) return;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = canvas.offsetWidth  * dpr;
+    canvas.height = canvas.offsetHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const VS = `
+    attribute vec2 a;
+    void main(){ gl_Position = vec4(a, 0.0, 1.0); }
+  `;
+
+  const FS = `
+    precision highp float;
+    uniform float u_t;
+    uniform vec2  u_r;
+
+    float h(vec2 p){
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    }
+    float n(vec2 p){
+      vec2 i = floor(p), f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(
+        mix(h(i), h(i+vec2(1,0)), f.x),
+        mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x),
+        f.y
+      );
+    }
+
+    float fbm(vec2 p){
+      float v = 0.0, a = 0.5;
+      p += vec2(3.1, 1.7);
+      for(int i=0;i<4;i++){
+        v += a * n(p);
+        p  = mat2(1.6, 1.2, -1.2, 1.6) * p;
+        a *= 0.5;
+      }
+      return v;
+    }
+
+    void main(){
+      vec2 st = gl_FragCoord.xy / u_r;
+      float t  = u_t * 0.07;
+
+      vec2 q = vec2(fbm(st + t), fbm(st + vec2(5.2, 1.3) + t * 0.9));
+      vec2 r = vec2(fbm(st + 2.8*q + vec2(1.7, 9.2) + t*0.6),
+                    fbm(st + 2.8*q + vec2(8.3, 2.8) + t*0.5));
+      float f = fbm(st + 2.8*r);
+
+      vec3 col0 = vec3(0.039, 0.039, 0.043);
+      vec3 col1 = vec3(0.042, 0.068, 0.200);
+      vec3 col2 = vec3(0.000, 0.278, 1.000);
+
+      vec3 col = mix(col0, col1, smoothstep(0.30, 0.65, f));
+      col      = mix(col,  col2 * 0.45, smoothstep(0.60, 0.90, f));
+
+      float bloom = exp(-dot(st - vec2(0.82, 0.22), st - vec2(0.82, 0.22)) * 9.0);
+      col += col2 * bloom * 0.14;
+
+      float bloom2 = exp(-dot(st - vec2(0.10, 0.75), st - vec2(0.10, 0.75)) * 12.0);
+      col += col1 * bloom2 * 0.22;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function mkShader(type, src){
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error('[hero-bg]', gl.getShaderInfoLog(s));
+      return null;
+    }
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, mkShader(gl.VERTEX_SHADER,   VS));
+  gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    console.error('[hero-bg]', gl.getProgramInfoLog(prog));
+    return;
+  }
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),
+    gl.STATIC_DRAW);
+
+  const aLoc = gl.getAttribLocation(prog, 'a');
+  gl.enableVertexAttribArray(aLoc);
+  gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const uT = gl.getUniformLocation(prog, 'u_t');
+  const uR = gl.getUniformLocation(prog, 'u_r');
+
+  const t0 = performance.now();
+  let raf;
+  function draw(){
+    gl.uniform1f(uT, (performance.now() - t0) / 1000);
+    gl.uniform2f(uR, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    raf = requestAnimationFrame(draw);
+  }
+
+  const observer = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) { if (!raf) draw(); }
+    else { cancelAnimationFrame(raf); raf = null; }
+  }, { threshold: 0 });
+  observer.observe(canvas);
+
+  draw();
+})();
+</script>
+</body>
+</html>
