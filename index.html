@@ -420,21 +420,110 @@ footer small{font-size:11px;color:rgba(255,255,255,.2)}
 .form-submit svg{flex-shrink:0;transition:transform .2s}
 .form-submit:hover svg{transform:translateX(3px)}
 
+/* ── HAMBURGER ───────────────────────────────────── */
+.nav-hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  background:none;border:none;cursor:pointer;
+  padding:11px;margin:-11px;z-index:1001;position:relative;
+  min-width:44px;min-height:44px;align-items:center;
+}
+.nav-hamburger span{
+  display:block;width:22px;height:2px;
+  background:#fff;border-radius:2px;
+  transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .25s ease;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── MOBILE MENU ─────────────────────────────────── */
+.nav-mobile-menu{
+  position:fixed;inset:0;z-index:997;
+  background:rgba(10,10,11,.97);
+  backdrop-filter:blur(20px);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+}
+.nav-mobile-menu.open{opacity:1;pointer-events:all}
+.nav-mobile-menu nav{display:flex;flex-direction:column;align-items:center;gap:4px}
+.nav-mobile-menu nav a{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(26px,8vw,38px);font-weight:600;
+  color:rgba(255,255,255,.6);text-decoration:none;
+  padding:10px 28px;letter-spacing:-.025em;
+  transition:color .2s ease;
+  min-height:44px;display:flex;align-items:center;
+}
+.nav-mobile-menu nav a:hover,
+.nav-mobile-menu nav a:focus-visible{color:#fff;outline:none}
+.nav-mobile-menu nav a.mobile-cta{
+  background:var(--bgp-base);color:#fff !important;
+  border-radius:50px;padding:13px 36px !important;
+  font-size:15px !important;font-family:'Inter',sans-serif;
+  font-weight:500 !important;letter-spacing:.01em;
+  box-shadow:0 4px 24px rgba(0,71,255,.4);
+  margin-top:16px;
+  transition:box-shadow .2s,transform .2s;
+}
+.nav-mobile-menu nav a.mobile-cta:hover{box-shadow:0 8px 36px rgba(0,71,255,.55);transform:translateY(-1px)}
+.mobile-lang-btn{
+  background:none;border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.5);
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;
+  letter-spacing:.1em;padding:10px 16px;border-radius:4px;
+  cursor:pointer;margin-top:28px;
+  min-height:44px;min-width:44px;
+  transition:color .2s,border-color .2s;
+}
+.mobile-lang-btn:hover{color:#fff;border-color:rgba(255,255,255,.45)}
+.mobile-lang-btn:focus-visible{outline:2px solid var(--bgp-light);outline-offset:2px}
+
 /* ── RESPONSIVE ──────────────────────────────────── */
+img{max-width:100%;height:auto}
+
 @media(max-width:900px){
   .hero{padding:100px 28px 72px}
   .section-about{grid-template-columns:1fr;padding:64px 28px;gap:40px}
   .section-services,.section-cases,.section-cta,.section-contact{padding-left:28px;padding-right:28px}
+  .section-end{padding:88px 28px 140px}
   .caps-grid{grid-template-columns:1fr}
   .contact-grid{grid-template-columns:1fr;gap:52px}
   .form-row{grid-template-columns:1fr}
   .nav{padding:16px 28px}
   footer{flex-wrap:wrap;padding:24px 28px;gap:16px}
   .cases-head{flex-direction:column;align-items:flex-start;gap:16px}
+  .logo-row{gap:32px;padding:0 48px}
 }
-@media(max-width:600px){
-  .nav-links{gap:16px}
-  .section-contact{padding:80px 28px 100px}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-hamburger{display:flex}
+  .form-input,.form-textarea{font-size:16px}
+  .form-submit{align-self:stretch;justify-content:center}
+  .section-cta{padding:64px 28px}
+  .section-end{padding:80px 28px 120px}
+}
+
+@media(max-width:480px){
+  body{font-size:16px}
+  .hero{padding:84px 20px 60px}
+  .section-about{padding:52px 20px;gap:28px}
+  .section-services{padding:52px 20px 64px}
+  .section-cases{padding:52px 20px 64px}
+  .section-cta{padding:52px 20px}
+  .section-end{padding:64px 20px 96px}
+  .section-contact{padding:72px 20px 96px}
+  .logo-row{gap:20px;padding:0 20px}
+  footer{flex-direction:column;align-items:flex-start;gap:12px}
+  .footer-nav{flex-wrap:wrap;gap:12px;row-gap:8px}
+  .proof-text{padding:0 20px}
+  .cap-item{padding:28px 20px}
+  .contact-sub{max-width:100%}
+  .hero-actions{flex-direction:column;align-items:stretch;gap:12px}
+  .btn-primary,.btn-ghost{justify-content:center;min-height:44px}
+  .section-services,.section-cases{padding-left:20px;padding-right:20px}
 }
 </style>
 </head>
@@ -451,7 +540,21 @@ footer small{font-size:11px;color:rgba(255,255,255,.2)}
     <li><button class="lang-toggle" id="lang-toggle" aria-label="Switch to Finnish">FI</button></li>
     <li><a href="#contact" class="cta" data-i18n="nav_cta">Get started</a></li>
   </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="nav-mobile-menu" id="nav-mobile-menu" role="dialog" aria-label="Navigation" aria-hidden="true">
+  <nav>
+    <a href="#about" data-i18n="nav_about">About</a>
+    <a href="#work" data-i18n="nav_work">Work</a>
+    <a href="#services" data-i18n="nav_services">Services</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
+    <a href="#contact" class="mobile-cta" data-i18n="nav_cta">Get started</a>
+  </nav>
+  <button class="mobile-lang-btn" id="mobile-lang-toggle" aria-label="Switch to Finnish">FI</button>
+</div>
 
 <!-- ── HERO ─────────────────────────────────────────────── -->
 <section class="hero">
@@ -594,7 +697,7 @@ footer small{font-size:11px;color:rgba(255,255,255,.2)}
       <div class="contact-details reveal reveal-delay-3">
         <div class="contact-detail-item">
           <span class="contact-detail-label" data-i18n="contact_d1_label">Email</span>
-          <span class="contact-detail-value" data-i18n="contact_d1_val">henrik.ohlsson@wingdy.com</span>
+          <span class="contact-detail-value" data-i18n="contact_d1_val">henrik.wingdy@gmail.com</span>
         </div>
         <div class="contact-detail-item">
           <span class="contact-detail-label" data-i18n="contact_d2_label">Response time</span>
@@ -693,7 +796,7 @@ const T = {
     contact_eyebrow:'Get in touch',
     contact_h2:"Let's build something <em>exceptional.</em>",
     contact_sub:"Tell us about your project and we'll get back to you within one business day. No commitment required.",
-    contact_d1_label:'Email',        contact_d1_val:'henrik.ohlsson@wingdy.com',
+    contact_d1_label:'Email',        contact_d1_val:'henrik.wingdy@gmail.com',
     contact_d2_label:'Response time', contact_d2_val:'Within one business day',
     contact_d3_label:'First step',   contact_d3_val:'A free 30-minute discovery call',
     form_name_label:'Name',    form_name_ph:'Your name',
@@ -747,7 +850,7 @@ const T = {
     contact_eyebrow:'Ota yhteyttä',
     contact_h2:'Rakennetaan jotain <em>poikkeuksellista.</em>',
     contact_sub:'Kerro meille projektistasi ja palaamme sinulle yhden arkipäivän kuluessa. Ei sitoumusta.',
-    contact_d1_label:'Sähköposti',   contact_d1_val:'henrik.ohlsson@wingdy.com',
+    contact_d1_label:'Sähköposti',   contact_d1_val:'henrik.wingdy@gmail.com',
     contact_d2_label:'Vastausaika',  contact_d2_val:'Yhden arkipäivän kuluessa',
     contact_d3_label:'Ensimmäinen askel', contact_d3_val:'Ilmainen 30 minuutin kartoituspuhelu',
     form_name_label:'Nimi',        form_name_ph:'Sinun nimesi',
@@ -785,17 +888,22 @@ function applyLang(lang) {
     const v = t[el.dataset.i18nPlaceholder];
     if (v !== undefined) el.placeholder = v;
   });
-  const btn = document.getElementById('lang-toggle');
-  if (btn) {
-    btn.textContent = lang === 'en' ? 'FI' : 'EN';
-    btn.setAttribute('aria-label', lang === 'en' ? 'Switch to Finnish' : 'Switch to English');
-  }
+  ['lang-toggle','mobile-lang-toggle'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.textContent = lang === 'en' ? 'FI' : 'EN';
+      btn.setAttribute('aria-label', lang === 'en' ? 'Switch to Finnish' : 'Switch to English');
+    }
+  });
   document.documentElement.lang = lang;
   currentLang = lang;
   localStorage.setItem(LANG_KEY, lang);
 }
 
 document.getElementById('lang-toggle').addEventListener('click', () => {
+  applyLang(currentLang === 'en' ? 'fi' : 'en');
+});
+document.getElementById('mobile-lang-toggle').addEventListener('click', () => {
   applyLang(currentLang === 'en' ? 'fi' : 'en');
 });
 
@@ -832,6 +940,26 @@ applyLang(currentLang);
     });
   }, { threshold: 0.1 });
   revealEls.forEach(el => revealObs.observe(el));
+
+  // ── HAMBURGER MENU ──
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('nav-mobile-menu');
+  function toggleMenu(open) {
+    if (open === undefined) open = !hamburger.classList.contains('open');
+    hamburger.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', String(open));
+    mobileMenu.classList.toggle('open', open);
+    mobileMenu.setAttribute('aria-hidden', String(!open));
+    hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  hamburger.addEventListener('click', () => toggleMenu());
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => toggleMenu(false));
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) toggleMenu(false);
+  });
 </script>
 
 <!-- ── HERO WEBGL BACKGROUND ─────────────────────────────── -->
