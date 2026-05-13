@@ -419,6 +419,24 @@ footer small{font-size:11px;color:rgba(255,255,255,.2)}
 .form-submit:active{transform:translateY(0)}
 .form-submit svg{flex-shrink:0;transition:transform .2s}
 .form-submit:hover svg{transform:translateX(3px)}
+.form-submit:disabled{opacity:.55;cursor:not-allowed;transform:none !important;box-shadow:0 4px 24px rgba(0,71,255,.2) !important}
+
+/* ── FORM FEEDBACK ───────────────────────────────── */
+#botcheck{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.field-error{font-size:11px;color:#ff6b72;line-height:1.4;min-height:0}
+.field-error:empty{display:none}
+.form-input.has-error,.form-textarea.has-error{border-color:rgba(255,107,114,.5)}
+.form-input.has-error:focus,.form-textarea.has-error:focus{border-color:rgba(255,107,114,.65)}
+.form-net-error{font-size:12px;color:rgba(255,107,114,.88);line-height:1.65;display:none;margin-top:6px}
+.form-net-error a{color:var(--emphasis);text-decoration:underline;text-underline-offset:2px}
+.form-success{display:none;padding:36px 0}
+.form-success-check{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(75,136,255,.1);border:1px solid rgba(75,136,255,.22);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--bgp-light);margin-bottom:20px;
+}
+.form-success-body{color:var(--para);font-size:15px;line-height:1.8;max-width:380px}
 
 /* ── HAMBURGER ───────────────────────────────────── */
 .nav-hamburger{
@@ -710,30 +728,43 @@ img{max-width:100%;height:auto}
       </div>
     </div>
 
-    <form class="contact-form reveal reveal-delay-1" onsubmit="return false">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label" for="cf-name" data-i18n="form_name_label">Name</label>
-          <input class="form-input" id="cf-name" type="text" placeholder="Your name" data-i18n-placeholder="form_name_ph" autocomplete="name">
+    <div id="contact-form-wrapper" class="reveal reveal-delay-1">
+      <form class="contact-form" id="contact-form" novalidate>
+        <input type="checkbox" name="botcheck" id="botcheck" tabindex="-1" autocomplete="off">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="cf-name" data-i18n="form_name_label">Name</label>
+            <input class="form-input" id="cf-name" type="text" placeholder="Your name" data-i18n-placeholder="form_name_ph" autocomplete="name">
+            <span class="field-error" id="err-name" role="alert" aria-live="polite"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cf-email" data-i18n="form_email_label">Email</label>
+            <input class="form-input" id="cf-email" type="email" placeholder="you@company.com" data-i18n-placeholder="form_email_ph" autocomplete="email">
+            <span class="field-error" id="err-email" role="alert" aria-live="polite"></span>
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label" for="cf-email" data-i18n="form_email_label">Email</label>
-          <input class="form-input" id="cf-email" type="email" placeholder="you@company.com" data-i18n-placeholder="form_email_ph" autocomplete="email">
+          <label class="form-label" for="cf-subject" data-i18n="form_subject_label">What do you need?</label>
+          <input class="form-input" id="cf-subject" type="text" placeholder="Website, AI agent, web app..." data-i18n-placeholder="form_subject_ph">
         </div>
+        <div class="form-group">
+          <label class="form-label" for="cf-message" data-i18n="form_msg_label">Tell us more</label>
+          <textarea class="form-textarea" id="cf-message" placeholder="Brief description of your project, goals, or timeline..." data-i18n-placeholder="form_msg_ph"></textarea>
+          <span class="field-error" id="err-message" role="alert" aria-live="polite"></span>
+        </div>
+        <button type="submit" class="form-submit" id="form-submit-btn">
+          <span data-i18n="form_submit" id="form-submit-text">Send message</span>
+          <svg id="form-submit-arrow" width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <p class="form-net-error" id="form-net-error" data-i18n-html="form_error">Something went wrong. Please email <a href="mailto:henrik.wingdy@gmail.com">henrik.wingdy@gmail.com</a> directly.</p>
+      </form>
+      <div class="form-success" id="form-success">
+        <div class="form-success-check">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M3.5 9.5l3.5 3.5 7.5-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <p class="form-success-body" data-i18n="form_success">Thanks, I'll get back to you within one business day.</p>
       </div>
-      <div class="form-group">
-        <label class="form-label" for="cf-subject" data-i18n="form_subject_label">What do you need?</label>
-        <input class="form-input" id="cf-subject" type="text" placeholder="Website, AI agent, web app..." data-i18n-placeholder="form_subject_ph">
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="cf-message" data-i18n="form_msg_label">Tell us more</label>
-        <textarea class="form-textarea" id="cf-message" placeholder="Brief description of your project, goals, or timeline..." data-i18n-placeholder="form_msg_ph"></textarea>
-      </div>
-      <button type="submit" class="form-submit">
-        <span data-i18n="form_submit">Send message</span>
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </form>
+    </div>
   </div>
 </section>
 
@@ -805,6 +836,13 @@ const T = {
     form_msg_label:'Tell us more',
     form_msg_ph:'Brief description of your project, goals, or timeline...',
     form_submit:'Send message',
+    form_submit_sending:'Sending...',
+    form_err_name:'Please enter your name.',
+    form_err_email_req:'Please enter your email.',
+    form_err_email_invalid:'Please enter a valid email address.',
+    form_err_message:'Please tell us about your project.',
+    form_success:"Thanks, I'll get back to you within one business day.",
+    form_error:'Something went wrong. Please email <a href="mailto:henrik.wingdy@gmail.com">henrik.wingdy@gmail.com</a> directly.',
     footer_copy:'© 2025 Wingdy',
   },
   fi: {
@@ -859,6 +897,13 @@ const T = {
     form_msg_label:'Kerro lisää',
     form_msg_ph:'Lyhyt kuvaus projektistasi, tavoitteistasi tai aikataulustasi...',
     form_submit:'Lähetä viesti',
+    form_submit_sending:'Lähetetään...',
+    form_err_name:'Syötä nimesi.',
+    form_err_email_req:'Syötä sähköpostiosoitteesi.',
+    form_err_email_invalid:'Syötä voimassa oleva sähköpostiosoite.',
+    form_err_message:'Kerro meille projektiisi liittyvistä asioista.',
+    form_success:'Kiitos, palaan asiaan yhden arkipäivän sisällä.',
+    form_error:'Jotain meni pieleen. Lähetä viesti suoraan osoitteeseen <a href="mailto:henrik.wingdy@gmail.com">henrik.wingdy@gmail.com</a>.',
     footer_copy:'© 2025 Wingdy',
   }
 };
@@ -1088,6 +1133,123 @@ applyLang(currentLang);
   observer.observe(canvas);
 
   draw();
+})();
+</script>
+<!-- ── CONTACT FORM SUBMIT ────────────────────────── -->
+<script>
+(function () {
+  const form       = document.getElementById('contact-form');
+  const submitBtn  = document.getElementById('form-submit-btn');
+  const submitText = document.getElementById('form-submit-text');
+  const submitArrow= document.getElementById('form-submit-arrow');
+  const netError   = document.getElementById('form-net-error');
+  const successDiv = document.getElementById('form-success');
+
+  function clearErrors() {
+    ['err-name','err-email','err-message'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = '';
+    });
+    ['cf-name','cf-email','cf-message'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('has-error');
+    });
+    netError.style.display = 'none';
+  }
+
+  function fieldError(inputId, errId, msg) {
+    var input = document.getElementById(inputId);
+    var err   = document.getElementById(errId);
+    if (input) input.classList.add('has-error');
+    if (err)   err.textContent = msg;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Honeypot — abort silently if filled
+    var botcheck = document.getElementById('botcheck');
+    if (botcheck && botcheck.checked) return;
+
+    clearErrors();
+
+    var t       = T[currentLang];
+    var name    = document.getElementById('cf-name').value.trim();
+    var email   = document.getElementById('cf-email').value.trim();
+    var service = document.getElementById('cf-subject').value.trim();
+    var message = document.getElementById('cf-message').value.trim();
+    var valid   = true;
+
+    if (!name) {
+      fieldError('cf-name', 'err-name', t.form_err_name);
+      valid = false;
+    }
+    if (!email) {
+      fieldError('cf-email', 'err-email', t.form_err_email_req);
+      valid = false;
+    } else if (!email.includes('@')) {
+      fieldError('cf-email', 'err-email', t.form_err_email_invalid);
+      valid = false;
+    }
+    if (!message) {
+      fieldError('cf-message', 'err-message', t.form_err_message);
+      valid = false;
+    }
+    if (!valid) return;
+
+    submitBtn.disabled   = true;
+    submitText.textContent = t.form_submit_sending;
+    if (submitArrow) submitArrow.style.display = 'none';
+
+    try {
+    
+
+      var WEB3FORMS_KEY = '13a2d6cd-43c3-4fa7-bb8d-99fd39825528';
+
+      var res  = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          name:       name,
+          email:      email,
+          service:    service,
+          message:    message,
+          subject:    'New lead from wingdy.com',
+          from_name:  'wingdyAI website',
+          botcheck:   false
+        })
+      });
+
+      var data = await res.json();
+      console.log('[web3forms]', res.status, data);
+
+      if (data.success) {
+        form.style.display        = 'none';
+        successDiv.style.display  = 'block';
+      } else {
+        throw new Error(data.message || 'server');
+      }
+    } catch (err) {
+      console.error('[web3forms error]', err);
+      submitBtn.disabled         = false;
+      submitText.textContent     = T[currentLang].form_submit;
+      if (submitArrow) submitArrow.style.display = '';
+      netError.style.display     = 'block';
+    }
+  });
+
+  // Clear has-error highlight as user corrects a field
+  ['cf-name','cf-email','cf-message'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function() {
+      el.classList.remove('has-error');
+      var errId = { 'cf-name':'err-name', 'cf-email':'err-email', 'cf-message':'err-message' }[id];
+      var errEl = document.getElementById(errId);
+      if (errEl) errEl.textContent = '';
+    });
+  });
 })();
 </script>
 </body>
